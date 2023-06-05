@@ -57,5 +57,29 @@ def extract_k_core(G, k):
             G[:, reduce_mask] = 0
     return G
 
+def reduce_graph(G, lower_bound):
+    """Reduce the graph G to a subgraph with a minimum number of nodes.
     
+    Parameters
+    ----------
+    G : np.ndarray
+        Adjacency matrix of the graph.
+    lower_bound : int
+        Minimum number of nodes in the subgraph.
+        
+    Returns
+    -------
+    G : np.ndarray
+        Adjacency matrix of the subgraph.
+    """
+    G = extract_k_core(G, lower_bound)
+    vertex_indices = np.argwhere(np.sum(G, axis=0) > 0).flatten()
+    v = np.random.choice(vertex_indices)
+    v_neighbours_mask = G[v, :] == 1
+    common_neighbours = np.logical_and(G, v_neighbours_mask).sum(axis=1, keepdims=True)
+    # Remove the edges between the nodes if their common neighbours 
+    # are less than the lower bound - 2
+    G[common_neighbours < (lower_bound - 2)] = 0
+    G = extract_k_core(G, lower_bound)
+    return G
     
