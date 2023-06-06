@@ -12,7 +12,7 @@ def _input_formmater(Q, bias):
   return bias, Q
 
 def _binarise_variables(variables):
-  return [1 if x == 1 else 0 for x in variables]
+  return np.array([1 if x == 1 else 0 for x in variables])
 
 def dwave_exactsolver(Q, bias):
   sampler = ExactSolver()
