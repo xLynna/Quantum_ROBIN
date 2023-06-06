@@ -11,6 +11,22 @@ def _ising_format(W, c):
   return Q, bias
 
 def solve_qubo(Q, bias, solver):
+  """
+  
+  Parameters
+  ----------
+  Q : numpy.ndarray
+      QUBO matrix.
+  bias : numpy.ndarray
+      Bias vector.
+  solver : str
+      Name of the solver.
+      
+  Returns
+  -------
+  solution : numpy.ndarray
+      Binary array of the solution.
+  """
   if _ising_slover[solver]:
     Q, bias = _ising_format(Q, bias)
   
