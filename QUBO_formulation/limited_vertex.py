@@ -115,7 +115,7 @@ def _remove_vertex(G, v):
   G = np.delete(G, v, axis=1)
   return G
 
-def split(G, vertex_limit, lower_bound):
+def split(G, vertex_limit, lower_bound, solver):
   """Split the graph G into subgraphs with a maximum number of nodes.
   
   Parameters
@@ -151,7 +151,7 @@ def split(G, vertex_limit, lower_bound):
     if sg_indices.shape[0] > 0:
       if sg_indices.shape[0] <= vertex_limit:
         # Obtain the max clique size and the related binary solution of the subgraph
-        sg_solution_mask = solve_graph(sg)
+        sg_solution_mask = solve_graph(sg, solver)
         # The size should include the vertices removed due to vertex limit
         combined_clique_size = len(sg_solution_mask) + len(sg_pending_indices)
         if combined_clique_size > lower_bound:
@@ -164,7 +164,7 @@ def split(G, vertex_limit, lower_bound):
     ssg_indices = ssg_indices[reduce_graph(ssg, lower_bound)]
     if ssg_indices.shape[0] > 0:
       if ssg_indices.shape[0] <= vertex_limit:
-        ssg_solution_mask = solve_graph(ssg)
+        ssg_solution_mask = solve_graph(ssg, solver)
         combined_clique_size = len(ssg_solution_mask) + len(sg_pending_indices) + 1 # v_ind
         if combined_clique_size > lower_bound:
           lower_bound = combined_clique_size
