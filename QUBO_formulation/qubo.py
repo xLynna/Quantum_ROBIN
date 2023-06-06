@@ -1,34 +1,39 @@
 import numpy as np
 import heapq
+from Solvers.solver import solve_qubo
 
 # Without variable number limits
-def naive_definite_transformation(G):
-    """Transform a graph G into a QUBO matrix Q and bias b for 
-       the maximum clique problem.
-    
-    Parameters
-    ----------
-    G : np.ndarray
-        Adjacency matrix of the graph.
-        
-    Returns
-    -------
-    Q : numpy.ndarray
-        QUBO matrix.
-    b : numpy.ndarray
-        Bias vector.
-    """
-    n = G.shape[0]
-    Q = np.zeros((n, n))
-    b = -np.ones(n)
+def definite_graph_to_qubo(G):
+  """Transform a graph G into a QUBO matrix Q and bias b for 
+      the maximum clique problem.
+  
+  Parameters
+  ----------
+  G : np.ndarray
+      Adjacency matrix of the graph.
+      
+  Returns
+  -------
+  Q : numpy.ndarray
+      QUBO matrix.
+  b : numpy.ndarray
+      Bias vector.
+  """
+  n = G.shape[0]
+  Q = np.zeros((n, n))
+  b = -np.ones(n)
 
-    Q[G == 0] = 1 # assign unit penalty to non-edges
-    Q.fill_diagonal(0)
+  Q[G == 0] = 1 # assign unit penalty to non-edges
+  Q.fill_diagonal(0)
 
-    penalty_reg = 2
-    
-    return penalty_reg * Q, b
+  penalty_reg = 2
+  
+  return penalty_reg * Q, b
 
-def solve(G):
-   pass
-   #return max_clique_mask
+def solve_graph(G, solver):
+  """Solve the maximum clique problem for a graph G.
+  """
+  Q, b = definite_graph_to_qubo(G)
+  
+  #max_clique_mask
+  return solve_qubo(Q, b, solver)
