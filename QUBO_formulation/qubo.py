@@ -57,3 +57,11 @@ def solve_graph(G, solver):
   
   #max_clique_mask
   return solve_qubo(Q, b, solver)
+
+def solve_weighted_graph(G, solver):
+  """Solve the maximum clique problem for a weighted graph G.
+  """
+  Q, b = weighted_graph_to_qubo(G)
+  
+  #max_clique_mask
+  return solve_qubo(Q, b, solver)
