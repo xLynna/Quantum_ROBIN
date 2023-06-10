@@ -24,6 +24,6 @@ def dwave_exact_solver(Q, bias):
 def dwave_annealing_solver(Q, bias):
   sampler = neal.SimulatedAnnealingSampler()
   bias, Q = _input_formmater(Q, bias)
-  response = sampler.sample_ising(bias, Q)
+  response = sampler.sample_ising(bias, Q, num_reads=500)
   solution = response.first.sample.values()
   return _binarise_variables(solution)
