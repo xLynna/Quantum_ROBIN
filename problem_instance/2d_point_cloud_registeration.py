@@ -39,7 +39,22 @@ def area_invariant_compatibility_test(a, b):
   """
 
   n = a.shape[0]
-  combs = itertools.combinations(range(n), 2)
+  failed_tests = []
+
+  for comb in itertools.combinations(range(n), 3):
+    A = a[comb]
+    B = b[comb]
+    min_area, max_area = extreme_area(A, 0.5)
+    area = area_by_coord(B)
+    if min_area < area < max_area:
+      continue
+    else:
+      zeros = np.zeros(n)
+      zeros[comb] = 1
+      failed_tests.append(zeros)
+  
+  return np.array(failed_tests)
+
     
 def _is_colinear(V):
   """
@@ -64,7 +79,6 @@ def _calculate_height(x, y, z):
 
     return height
 
-
 def extreme_area(V, beta):
   """
   :param V: three points (3, 2)
@@ -82,3 +96,7 @@ def extreme_area(V, beta):
   height = _calculate_height(x, y, z)
   base = np.linalg.norm(y - x)
   return 0.5 * (base - 2 * beta) * (height - 2 * beta), 0.5 * (base + 2 * beta) * (height + 2 * beta)
+
+def area_by_coord(V):
+  x, y, z = V
+  return abs((x[0]*(y[1]-z[1]) + y[0]*(z[1]-x[1]) + z[0]*(x[1]-y[1])) / 2)
