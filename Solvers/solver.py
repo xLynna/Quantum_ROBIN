@@ -1,6 +1,6 @@
 import numpy as np
-from dwave_solver import dwave_exact_solver, dwave_annealing_solver
-from gurobi_solver import gurobi_solver
+from Solvers.dwave_solver import dwave_exact_solver, dwave_annealing_solver
+from Solvers.gurobi_solver import gurobi_solver
 
 _ising_slover = {"gurobi": False, "dwave_exact": True, "dwave_annealing": True}
 
