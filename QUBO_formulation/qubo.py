@@ -50,6 +50,22 @@ def weighted_graph_to_qubo(G, penalty_reg=1):
 
   return penalty_reg * Q, b
 
+def hypergraph_to_qubo(H, penalty_reg=1):
+  """H is a inverted-hypergraph, each row represent a non-hyperedge.
+
+  Parameters
+  ----------
+  H : np.ndarray (k, n nodes)
+      Inverted hypergraph.
+  """
+
+  n = H.shape[1]
+  b = -np.ones(n)
+  Q = H.T@H
+  
+  return penalty_reg * Q, b
+
+
 def solve_graph(G, solver):
   """Solve the maximum clique problem for a graph G.
   """
