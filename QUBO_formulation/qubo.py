@@ -24,7 +24,7 @@ def definite_graph_to_qubo(G, penalty_reg=2):
   b = -np.ones(n)
 
   Q[G == 0] = 1 # assign unit penalty to non-edges
-  Q.fill_diagonal(0)
+  np.fill_diagonal(Q, 0)
   
   return penalty_reg * Q, b
 
@@ -74,7 +74,7 @@ def n_invariant_ordinary_graph_to_qubo(H, penalty_reg=1, weighted=False):
     inds = np.argwhere(H[:, i] == 1).flatten()
     Q[i, :] = np.sum(H[inds, :])
 
-  Q.fill_diagonal(0) # TODO check if it's necessary
+  np.fill_diagonal(Q, 0) # TODO check if it's necessary
   if not weighted:
     Q = Q.astype(bool).astype(int)
   
@@ -95,11 +95,11 @@ def hypergraph_to_qubo(H, penalty_reg=1):
   
   return penalty_reg * Q, b
 
-
-def solve_graph(G, solver):
+# graph solver (connector to solvers)
+def solve_graph(G, solver, penalty_reg=2):
   """Solve the maximum clique problem for a graph G.
   """
-  Q, b = definite_graph_to_qubo(G)
+  Q, b = definite_graph_to_qubo(G, penalty_reg)
   
   #max_clique_mask
   return solve_qubo(Q, b, solver)
