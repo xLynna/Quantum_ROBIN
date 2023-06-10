@@ -50,13 +50,43 @@ def weighted_graph_to_qubo(G, penalty_reg=1):
 
   return penalty_reg * Q, b
 
+def n_invariant_ordinary_graph_to_qubo(H, penalty_reg=1, weighted=False):
+  """Transform a graph G into a QUBO matrix Q and bias b for 
+      the maximum clique problem.
+  
+  Parameters
+  ----------
+  H : np.ndarray
+      Adjacency matrix of the graph, as the failed tests egde matrix.
+      
+  Returns
+  -------
+  Q : numpy.ndarray
+      QUBO matrix.
+  b : numpy.ndarray
+      Bias vector.
+  """
+  n = H.shape[1]
+  Q = np.zeros((n, n))
+  b = -np.ones(n)
+
+  for i in range(n):
+    inds = np.argwhere(H[:, i] == 1).flatten()
+    Q[i, :] = np.sum(H[inds, :])
+
+  Q.fill_diagonal(0) # TODO check if it's necessary
+  if not weighted:
+    Q = Q.astype(bool).astype(int)
+  
+  return penalty_reg * Q, b
+
 def hypergraph_to_qubo(H, penalty_reg=1):
   """H is a inverted-hypergraph, each row represent a non-hyperedge.
 
   Parameters
   ----------
   H : np.ndarray (k, n nodes)
-      Inverted hypergraph.
+      Inverted asymmetric hypergraph regarding the failed tests.
   """
 
   n = H.shape[1]
