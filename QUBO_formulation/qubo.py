@@ -110,4 +110,4 @@ def solve_weighted_graph(G, solver, penalty_reg=0.1):
   Q, b = weighted_graph_to_qubo(G)
   
   #max_clique_mask
-  return solve_qubo(Q, b, solver, penalty_reg)
+  return solve_qubo(Q, b, solver)
