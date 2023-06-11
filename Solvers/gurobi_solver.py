@@ -16,6 +16,6 @@ def gurobi_solver(Q, bias):
   model = _init_model(Q, bias)
   model.optimize()
   if model.status == gp.GRB.OPTIMAL:
-    return np.array([x.X for x in model.getVars()])
+    return np.array([x.X for x in model.getVars()]).astype(int)
   else:
       raise ValueError("No solution found.")
