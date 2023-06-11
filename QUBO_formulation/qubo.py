@@ -96,7 +96,7 @@ def hypergraph_to_qubo(H, penalty_reg=1):
   return penalty_reg * Q, b
 
 # graph solver (connector to solvers)
-def solve_graph(G, solver, penalty_reg=2):
+def solve_graph(G, solver, penalty_reg=0.1):
   """Solve the maximum clique problem for a graph G.
   """
   Q, b = definite_graph_to_qubo(G, penalty_reg)
@@ -104,10 +104,10 @@ def solve_graph(G, solver, penalty_reg=2):
   #max_clique_mask
   return solve_qubo(Q, b, solver)
 
-def solve_weighted_graph(G, solver):
+def solve_weighted_graph(G, solver, penalty_reg=0.1):
   """Solve the maximum clique problem for a weighted graph G.
   """
   Q, b = weighted_graph_to_qubo(G)
   
   #max_clique_mask
-  return solve_qubo(Q, b, solver)
+  return solve_qubo(Q, b, solver, penalty_reg)
