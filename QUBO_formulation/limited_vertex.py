@@ -95,6 +95,7 @@ def _extract_subgraph(G, v):
   """
   indices = np.arange(G.shape[0])
   v_neighbours_mask = G[v, :] == 1
+  v_neighbours_mask[v] = False # exclude v itself
   G = G[v_neighbours_mask, :][:, v_neighbours_mask].copy()
   return G, indices[v_neighbours_mask]
 
@@ -117,7 +118,7 @@ def _remove_vertex(G, v):
   G = np.delete(G, v, axis=1)
   return G
 
-def split(G, vertex_limit, lower_bound, solver):
+def split(G, vertex_limit, lower_bound, solver, api_key=None):
   """Split the graph G into subgraphs with a maximum number of nodes.
   
   Parameters
@@ -134,7 +135,7 @@ def split(G, vertex_limit, lower_bound, solver):
   max_clique_indices : set
       Indices of the nodes in the maximum clique.
   """
-  max_clique_indices = None
+  max_clique_indices = set()
   ind = 0
   # negate graph size, graph, remaining nodes, splitted nodes
   subgraphs = [(-G.shape[0], ind, G, np.arange(G.shape[0]), set())]
@@ -154,7 +155,7 @@ def split(G, vertex_limit, lower_bound, solver):
     if sg_indices.shape[0] > 0:
       if sg_indices.shape[0] <= vertex_limit:
         # Obtain the max clique size and the related binary solution of the subgraph
-        sg_solution_mask = solve_graph(sg, solver).astype(bool)
+        sg_solution_mask = solve_graph(sg, solver, api_key=api_key).astype(bool)
         # The size should include the vertices removed due to vertex limit
         combined_clique_size = len(np.argwhere(sg_solution_mask).flatten()) + len(sg_pending_indices)
         if combined_clique_size > lower_bound:
@@ -169,7 +170,7 @@ def split(G, vertex_limit, lower_bound, solver):
     ssg_indices = ssg_indices[reduce_graph(ssg, lower_bound)]
     if ssg_indices.shape[0] > 0:
       if ssg_indices.shape[0] <= vertex_limit:
-        ssg_solution_mask = solve_graph(ssg, solver).astype(bool)
+        ssg_solution_mask = solve_graph(ssg, solver, api_key=api_key).astype(bool)
         combined_clique_size = len(np.argwhere(ssg_solution_mask).flatten()) + len(sg_pending_indices) + 1 # v_ind
         if combined_clique_size > lower_bound:
           lower_bound = combined_clique_size
@@ -179,4 +180,4 @@ def split(G, vertex_limit, lower_bound, solver):
         ind += 1
         heapq.heappush(subgraphs, (-ssg.shape[0], ind, ssg, ssg_indices, sg_pending_indices.union({v_ind})))
 
-  return max_clique_indices, lower_bound
+  return list(max_clique_indices), lower_bound
