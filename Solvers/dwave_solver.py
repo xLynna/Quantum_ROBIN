@@ -2,6 +2,7 @@ import numpy as np
 import neal
 from dimod.reference.samplers import ExactSolver
 import itertools
+from dwave.system import DWaveSampler, EmbeddingComposite
 
 def _input_formmater(Q, bias):
   bias = bias.reshape(-1).tolist()
@@ -25,5 +26,12 @@ def dwave_annealing_solver(Q, bias):
   sampler = neal.SimulatedAnnealingSampler()
   bias, Q = _input_formmater(Q, bias)
   response = sampler.sample_ising(bias, Q, num_reads=500)
+  solution = response.first.sample.values()
+  return _binarise_variables(solution)
+
+def dwave_quantum_solver(Q, bias, api_key):
+  sampler = EmbeddingComposite(DWaveSampler(token=api_key, solver={'qpu': True}))
+  bias, Q = _input_formmater(Q, bias)
+  response = sampler.sample_ising(bias, Q, num_reads=500, return_embedding=True)
   solution = response.first.sample.values()
   return _binarise_variables(solution)
